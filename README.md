@@ -21,7 +21,7 @@ https://developers.google.com/chart/interactive/docs/gallery
     ```
 
 ## Step2:
-*There are lots of good examples in Google Chart website.*
+*<b>There are lots of good examples in Google Chart website.</b>*
 - use html and start script 
 ```javascript
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -37,4 +37,50 @@ https://developers.google.com/chart/interactive/docs/gallery
     // Draw the pie chart and bar chart when Charts is loaded.
     google.charts.setOnLoadCallback(drawChart);
 ```
+## Step3:
+- Start Fucntion
+- When you add row for the visualization, start php again and bring the data from mysql
+```javascript
+function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'user');
+        data.addColumn('number', 'num');
+        data.addRows([
+          <?php 
+	    $ct=0;
+            while($row = mysqli_fetch_array($result))
+            {
+                //insert user and count
+	      $user[$ct]=$row['user'];
+	      $num[$ct]=$row['num'];
+	      $ct++;
+              echo "['".$row['user']."',".$row['num']."],";
+            }
+          ?>
+       
+        ]);
 
+        //option1 show in count
+        var piechart_options = {title:'top 10 (Count)',
+                       width:400,
+                       height:300,
+                       pieSliceText: 'value'};
+         var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
+        piechart.draw(data, piechart_options);
+
+        //option2 show in percentage
+        var piechart_options2 = {title:'top 10 (Percentage)',
+                       width:400,
+                       height:300};
+
+        var piechart2 = new google.visualization.PieChart(document.getElementById('piechart_div2'));
+        piechart2.draw(data, piechart_options2);
+
+        var barchart_options = {title:'top 10 Attempted penetrations',
+                       width:400,
+                       height:300,
+                       legend: 'none'};
+        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
+        barchart.draw(data, barchart_options);
+      }
+```
